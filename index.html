@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Walking Reminder</title>
+
+    <!-- Web App Manifest -->
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiV2Fsa2luZyBSZW1pbmRlciIsInNob3J0X25hbWUiOiJXYWxrIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiM2NjdlZWEiLCJ0aGVtZV9jb2xvciI6IiM2NjdlZWEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTWpRd0lpQm9aV2xuYUhROUlqSTBNQ0lpSUhacFpYZENiM2c5SWpBZ01DQXlOREFnTWpRd0lpQm1hV3hzUFNJaU5qWTJaV1ZoSWlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpUGlCOFBIQmhkR2dnWkQwaWJURXlNQ0EyTUdNeE5qZ3VNVFVnTUNCek16SXVNalVnTVRRdU5UY2dOakF1TnpVZ016SXROekl1TnpWZ056SXVOelVnTXpKak1TNHpNU0F4Tnk0Mk5TQXhOaTQxT1NBek1pNDFPU0F6TUM0MU1pQTBOaTQxTjJNeE1pNDVNeUF4TkM0eE5pQXlOaTQ1TXlBek15NHhOaUEwTWk0MU5TQTFNaTQxTjJNeE5TNHpOaUF4T1M0ME1TQXpNUzQ0TWlBeE9TNDBNVUEwT1M0NU4ySXhOQzQxTVMxdU1UUXVOREV0WVRFek5TNDFNeUF4TXpVdU5UTWdNQ0F3SURBZ05qa3VOekI2YlRVd0xqSTFJREV5TkdNdE9DNDFNemN0TkM0MU5EWXRNVEl1TmpJdE1USXVOakl0TWpFdU1UWWdNRU14TmpBdU5UZ3VPVEUzSURFNE1TNDJNekF1T1RFM2FERTVNQ1Y4UEM5d1lYUm9Qanc5YzNablBnPT0iLCJzaXplcyI6IjI0MHgyNDAiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=" />
+
+    <!-- iOS Web App Config -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Walk Reminder" />
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9IiM2NjdlZWEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Im05MCA0NWMxMjYuMTUgMCBzMjQuNzUgMTAuOTMgNDUuNTYgMjQtNTQuNTYgNTQuNTYgNTQuNTZjMTAuNjIgMTMuMjQgMTIuNDIgMjQuMzcgMjIuOTEgMzguNTdjOS42OSAxMS4wOCAyMC4xOCAyNC42OSAzMS41IDM5LjM3YzEzLjUgMTQuNjUgMjMuODIgMTQuNjVhMTAxLjU2IDEwMS41NiAwIDAgMCA1Mi4xNnoiLz48L3N2Zz4=" />
+
+    <!-- Styles -->
     <style>
         :root {
             --primary: #667eea;
@@ -27,104 +33,175 @@
             --glass-border: rgba(255, 255, 255, 0.2);
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, #9333ea 100%);
-            min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px; position:relative;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
         }
         body::before {
-            content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background:
-                radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%,transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%,transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120,200,255,0.2) 0%,transparent 50%);
-            pointer-events:none; animation:float 20s ease-in-out infinite;
+                radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120,200,255,0.2) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
         }
-        @keyframes float {0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-20px) rotate(180deg);}}
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
 
         .app-container {
-            background:rgba(255,255,255,0.95); backdrop-filter:blur(20px);
-            border-radius:24px; padding:32px; box-shadow:0 25px 50px rgba(0,0,0,0.15),0 0 0 1px rgba(255,255,255,0.1);
-            text-align:center; max-width:420px; width:100%; position:relative; border:1px solid rgba(255,255,255,0.2);
-            animation:slideUp 0.8s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: slideUp 0.8s ease;
         }
-        @keyframes slideUp {from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
-
-        .app-title {font-size:28px; font-weight:700; margin-bottom:8px;
-            background:linear-gradient(135deg,var(--primary),var(--info));
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-        }
-        .app-subtitle {color:var(--gray); font-size:14px; margin-bottom:24px; font-weight:500;}
-
-        .status {font-size:16px; margin:24px 0; padding:16px 20px; border-radius:16px;
-            font-weight:600; position:relative; overflow:hidden;
-        }
-        .status::before {content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
-            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
-            transition:left 0.5s;
-        }
-        .status.active::before {left:100%;}
-        .status.active {background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.05));
-            color:var(--success-dark); border:2px solid rgba(16,185,129,0.3);
-            animation:pulse 2s infinite;
-        }
-        @keyframes pulse {0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);}50%{box-shadow:0 0 0 10px rgba(16,185,129,0);} }
-        .status.inactive {background:rgba(100,116,139,0.1); color:var(--gray); border:2px solid rgba(100,116,139,0.2);}        
-
-        .controls {display:flex; gap:12px; margin:28px 0;}
-        .btn {flex:1; padding:16px 20px; border:none; border-radius:16px; font-size:15px;
-            font-weight:600; text-transform:uppercase; letter-spacing:0.5px; position:relative;
-            overflow:hidden; min-height:54px; display:flex; align-items:center; justify-content:center;
-        }
-        .btn::before {content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
-            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent); transition:left 0.5s;
-        }
-        .btn:active::before{left:100%;}
-        .btn-start {background:linear-gradient(135deg,var(--success),var(--success-dark)); color:#fff;
-            box-shadow:0 4px 15px rgba(16,185,129,0.4);
-        }
-        .btn-stop {background:linear-gradient(135deg,var(--danger),var(--danger-dark)); color:#fff;
-            box-shadow:0 4px 15px rgba(239,68,68,0.4);
-        }
-        .btn-start:hover:not(:disabled), .btn-stop:hover:not(:disabled){transform:translateY(-3px);}
-        .btn-start:active,.btn-stop:active{transform:translateY(-1px);}
-        .btn:disabled{opacity:0.6;cursor:not-allowed;}
-
-        .next-reminder {display:none; background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(79,70,229,0.05));
-            color:var(--info); padding:20px; border-radius:16px; margin:24px 0;
-            border:2px solid rgba(99,102,241,0.2); backdrop-filter:blur(10px);
-        }
-        .countdown {font-size:32px; font-family:'SF Mono',Monaco,monospace; margin:8px 0; font-weight:700;
-            text-shadow:0 2px 4px rgba(99,102,241,0.3);
-        }
-        .progress-ring {width:80px;height:80px;margin:0 auto 16px;}
-        .progress-ring-circle {fill:transparent; stroke:var(--info); stroke-width:4;
-            r:36; cx:40; cy:40; stroke-dasharray:226; stroke-dashoffset:226; transition:stroke-dashoffset 0.5s ease;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .stats-grid {display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px;}
-        .stat-card {background:rgba(100,116,139,0.05); backdrop-filter:blur(10px);
-            padding:20px 16px; border-radius:16px; border:1px solid rgba(100,116,139,0.1);
-            transition:transform 0.3s;
+        .app-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .stat-card:hover{transform:translateY(-2px);}
-        .stat-title{font-size:12px; color:var(--gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;}
-        .stat-value{font-size:28px; font-weight:800; color:var(--info); font-family:'SF Mono',Monaco,monospace;}
+        .app-subtitle {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
 
-        .health-tip {margin-top:16px; font-style:italic; color:var(--gray);}
-        .motivational-message {display:none; margin-top:16px; font-weight:500;}
+        .status {
+            font-size: 16px;
+            margin: 24px 0;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        .status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        .status.active::before {
+            left: 100%;
+        }
+        .status.active {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05));
+            color: var(--success-dark);
+            border: 2px solid rgba(16,185,129,0.3);
+            animation: pulse 2s infinite;
+        }
+        .status.inactive {
+            background: rgba(100,116,139,0.1);
+            color: var(--gray);
+            border: 2px solid rgba(100,116,139,0.2);
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+        }
 
-        .settings-panel {margin-top:20px; padding:20px; background:rgba(100,116,139,0.05); border-radius:16px;}
-        .setting-item{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
-        .toggle{width:50px;height:24px;background:rgba(100,116,139,0.3);border-radius:12px;cursor:pointer;position:relative;}
-        .toggle.active{background:var(--success);}        
-        .toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.3s;}
-        .toggle.active::after{transform:translateX(26px);}
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin: 28px 0;
+        }
+        .btn {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn:active::before {
+            left: 100%;
+        }
+        .btn-start {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+        }
+        .btn-stop {
+            background: linear-gradient(135deg, var(--danger), var(--danger-dark));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.4);
+        }
+        .btn-start:hover:not(:disabled),
+        .btn-stop:hover:not(:disabled) {
+            transform: translateY(-3px);
+        }
+        .btn-start:active,
+        .btn-stop:active {
+            transform: translateY(-1px);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
-        @media(max-width:480px){.controls{flex-direction:column;} .stats-grid{grid-template-columns:1fr;}}
+        .next-reminder {
+            display: none;
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(79,70,229,0.05));
+            color: var(--info);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 24px 0;
+        }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <div class="walking-icon">🚶‍♂️</div>

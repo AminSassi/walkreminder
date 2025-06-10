@@ -1,15 +1,27 @@
 {
-  "name": "WalkReminder",
-  "short_name": "WalkReminder",
-  "start_url": ".",
+  "name": "Walking Reminder",
+  "short_name": "Walk Reminder",
+  "description": "Stay healthy with regular walking breaks",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2b2b2b",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait",
+  "scope": "./",
+  "lang": "en",
+  "categories": ["health", "productivity", "lifestyle"],
   "icons": [
     {
       "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

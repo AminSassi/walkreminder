@@ -6,13 +6,14 @@
     <title>Walking Reminder</title>
 
     <!-- Web App Manifest -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiV2Fsa2luZyBSZW1pbmRlciIsInNob3J0X25hbWUiOiJXYWxrIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiM2NjdlZWEiLCJ0aGVtZV9jb2xvciI6IiM2NjdlZWEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTWpRd0lpQm9aV2xuYUhROUlqSTBNQ0lpSUhacFpYZENiM2c5SWpBZ01DQXlOREFnTWpRd0lpQm1hV3hzUFNJaU5qWTJaV1ZoSWlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpUGlCOFBIQmhkR2dnWkQwaWJURXlNQ0EyTUdNeE5qZ3VNVFVnTUNCek16SXVNalVnTVRRdU5UY2dOakF1TnpVZ016SXROekl1TnpWZ056SXVOelVnTXpKak1TNHpNU0F4Tnk0Mk5TQXhOaTQxT1NBek1pNDFPU0F6TUM0MU1pQTBOaTQxTjJNeE1pNDVNeUF4TkM0eE5pQXlOaTQ1TXlBek15NHhOaUEwTWk0MU5TQTFNaTQxTjJNeE5TNHpOaUF4T1M0ME1TQXpNUzQ0TWlBeE9TNDBNVUEwT1M0NU4ySXhOQzQxTVMxdU1UUXVOREV0WVRFek5TNDFNeUF4TXpVdU5UTWdNQ0F3SURBZ05qa3VOekI2YlRVd0xqSTFJREV5TkdNdE9DNDFNemN0TkM0MU5EWXRNVEl1TmpJdE1USXVOakl0TWpFdU1UWWdNRU14TmpBdU5UZ3VPVEUzSURFNE1TNDJNekF1T1RFM2FERTVNQ1Y4UEM5d1lYUm9Qanc5YzNablBnPT0iLCJzaXplcyI6IjI0MHgyNDAiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=" />
+    <link rel="manifest" href="manifest.json" />
 
     <!-- iOS Web App Config -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Walk Reminder" />
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9IiM2NjdlZWEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Im05MCA0NWMxMjYuMTUgMCBzMjQuNzUgMTAuOTMgNDUuNTYgMjQtNTQuNTYgNTQuNTYgNTQuNTZjMTAuNjIgMTMuMjQgMTIuNDIgMjQuMzcgMjIuOTEgMzguNTdjOS42OSAxMS4wOCAyMC4xOCAyNC42OSAzMS41IDM5LjM3YzEzLjUgMTQuNjUgMjMuODIgMTQuNjVhMTAxLjU2IDEwMS41NiAwIDAgMCA1Mi4xNnoiLz48L3N2Zz4=" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="icon" type="image/png" href="icon.png" />
 
     <!-- Styles -->
     <style>
@@ -81,6 +82,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .walking-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
         .app-title {
             font-size: 28px;
             font-weight: 700;
@@ -88,6 +100,7 @@
             background: linear-gradient(135deg, var(--primary), var(--info));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .app-subtitle {
             color: var(--gray);
@@ -104,6 +117,7 @@
             font-weight: 600;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
         .status::before {
             content: '';
@@ -154,6 +168,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         .btn::before {
             content: '';
@@ -198,6 +214,161 @@
             padding: 20px;
             border-radius: 16px;
             margin: 24px 0;
+            border: 2px solid rgba(99,102,241,0.2);
+            position: relative;
+        }
+        .countdown {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 12px 0;
+            color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .stat-title {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .health-tip {
+            background: rgba(255, 193, 7, 0.1);
+            color: #b45309;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 14px;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .motivational-message {
+            display: none;
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05));
+            color: var(--success-dark);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 14px;
+            border: 2px solid rgba(16,185,129,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 24px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            font-size: 14px;
+            color: var(--dark);
+        }
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--gray);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .toggle::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            top: 4px;
+            left: 4px;
+            transition: transform 0.3s ease;
+        }
+        .toggle.active {
+            background: var(--success);
+        }
+        .toggle.active::before {
+            transform: translateX(22px);
+        }
+
+        .reminder-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .reminder-content {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .reminder-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .reminder-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .reminder-message {
+            color: var(--gray);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .btn-acknowledge {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .btn-acknowledge:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -207,7 +378,7 @@
         <div class="walking-icon">🚶‍♂️</div>
         <h1 class="app-title">Walking Reminder</h1>
         <p class="app-subtitle">Stay healthy with regular walking breaks</p>
-        <div id="status" class="status inactive"><span>Ready to start your work day</span></div>
+        <div id="status" class="status inactive">Ready to start your work day</div>
         <div class="controls">
             <button id="startBtn" class="btn btn-start">🏢 Start Work</button>
             <button id="stopBtn" class="btn btn-stop" disabled>🏠 Go Home</button>
@@ -215,61 +386,411 @@
         <div id="nextReminder" class="next-reminder">
             <div>Next reminder in:</div>
             <div id="countdown" class="countdown">30:00</div>
-            <svg class="progress-ring"><circle id="progressCircle" class="progress-ring-circle"/></svg>
         </div>
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-title">Today's Walks</div><div id="walkCount" class="stat-value">0</div></div>
-            <div class="stat-card"><div class="stat-title">Best Streak</div><div id="bestStreak" class="stat-value">0</div></div>
+            <div class="stat-card">
+                <div class="stat-title">Today's Walks</div>
+                <div id="walkCount" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Best Streak</div>
+                <div id="bestStreak" class="stat-value">0</div>
+            </div>
         </div>
         <div id="healthTip" class="health-tip">💡 Regular walking breaks improve circulation, reduce eye strain, and boost productivity!</div>
         <div id="motivationalMessage" class="motivational-message">🎉 Great job! You're building a healthy habit!</div>
         <div class="settings-panel">
-            <div class="setting-item"><span>Sound Notifications</span><div id="soundToggle" class="toggle active"></div></div>
-            <div class="setting-item"><span>Vibration</span><div id="vibrationToggle" class="toggle active"></div></div>
-            <div class="setting-item"><span>Browser Notifications</span><div id="notificationToggle" class="toggle"></div></div>
+            <div class="setting-item">
+                <span>Sound Notifications</span>
+                <div id="soundToggle" class="toggle active"></div>
+            </div>
+            <div class="setting-item">
+                <span>Vibration</span>
+                <div id="vibrationToggle" class="toggle active"></div>
+            </div>
+            <div class="setting-item">
+                <span>Browser Notifications</span>
+                <div id="notificationToggle" class="toggle"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder Popup -->
+    <div id="reminderPopup" class="reminder-popup">
+        <div class="reminder-content">
+            <div class="reminder-icon">🚶‍♂️</div>
+            <h2 class="reminder-title">Time to Walk!</h2>
+            <p class="reminder-message">Take a 2-3 minute walking break to improve your health and productivity.</p>
+            <button class="btn-acknowledge">I took a walk! ✅</button>
         </div>
     </div>
     
     <script>
-        let isActive=false, reminderInterval, countdownInterval, nextReminderTime;
-        let walkCount=parseInt(localStorage.getItem('walkCount')||'0'),
-            bestStreak=parseInt(localStorage.getItem('bestStreak')||'0'),
-            currentStreak=parseInt(localStorage.getItem('currentStreak')||'0');
-        let settings={sound:true,vibration:true,notifications:false};
-        const healthTips=[/*...*/], motivationalMessages=[/*...*/];
-        function initApp(){
-            document.getElementById('startBtn').onclick=startReminders;
-            document.getElementById('stopBtn').onclick=stopReminders;
-            document.querySelector('.btn-acknowledge').onclick=acknowledgeReminder;
-            document.getElementById('soundToggle').onclick=toggleSound;
-            document.getElementById('vibrationToggle').onclick=toggleVibration;
-            document.getElementById('notificationToggle').onclick=toggleNotifications;
-            loadSettings(); loadStats(); updateHealthTip(); checkNotificationPermission(); updateUI();
+        let isActive = false;
+        let reminderInterval = null;
+        let countdownInterval = null;
+        let nextReminderTime = null;
+        let walkCount = 0;
+        let bestStreak = 0;
+        let currentStreak = 0;
+        let settings = {
+            sound: true,
+            vibration: true,
+            notifications: false
+        };
+
+        const healthTips = [
+            "💡 Regular walking breaks improve circulation, reduce eye strain, and boost productivity!",
+            "🧠 Walking helps clear your mind and improve creative thinking.",
+            "❤️ Just 2-3 minutes of walking can help reduce stress and improve mood.",
+            "🦴 Walking strengthens your bones and helps prevent back pain from sitting.",
+            "💪 Regular movement breaks can increase your energy levels throughout the day.",
+            "👀 Walking gives your eyes a break from screen strain and helps prevent headaches.",
+            "🩸 Walking improves blood circulation and helps prevent blood clots.",
+            "😴 Regular walking breaks can improve your sleep quality at night.",
+            "🔥 Walking boosts your metabolism and helps maintain a healthy weight.",
+            "🧘 Walking is a form of moving meditation that reduces anxiety."
+        ];
+
+        const motivationalMessages = [
+            "🎉 Great job! You're building a healthy habit!",
+            "💪 Keep it up! Your body thanks you!",
+            "🌟 You're on fire! Another walk completed!",
+            "🏆 Excellent! You're investing in your health!",
+            "✨ Amazing commitment to your wellbeing!",
+            "🎯 You're crushing your walking goals!",
+            "💯 Perfect! Another step towards better health!",
+            "🚀 You're unstoppable! Keep walking!",
+            "🌈 Wonderful! Your future self will thank you!",
+            "⭐ Outstanding dedication to staying active!"
+        ];
+
+        function initApp() {
+            // Event listeners
+            document.getElementById('startBtn').addEventListener('click', startReminders);
+            document.getElementById('stopBtn').addEventListener('click', stopReminders);
+            document.querySelector('.btn-acknowledge').addEventListener('click', acknowledgeReminder);
+            document.getElementById('soundToggle').addEventListener('click', toggleSound);
+            document.getElementById('vibrationToggle').addEventListener('click', toggleVibration);
+            document.getElementById('notificationToggle').addEventListener('click', toggleNotifications);
+
+            // Initialize
+            loadSettings();
+            loadStats();
+            updateHealthTip();
+            requestNotificationPermission();
+            updateUI();
         }
-        function loadSettings(){let s=localStorage.getItem('walkingSettings'); if(s)settings=JSON.parse(s);updateSettingsUI();}
-        function saveSettings(){localStorage.setItem('walkingSettings',JSON.stringify(settings));}
-        function updateSettingsUI(){
-            document.getElementById('soundToggle').classList.toggle('active',settings.sound);
-            document.getElementById('vibrationToggle').classList.toggle('active',settings.vibration);
-            document.getElementById('notificationToggle').classList.toggle('active',settings.notifications);
+
+        function loadSettings() {
+            const saved = localStorage.getItem('walkingSettings');
+            if (saved) {
+                settings = JSON.parse(saved);
+            }
+            updateSettingsUI();
         }
-        function toggleSound(){settings.sound=!settings.sound;saveSettings();updateSettingsUI();}
-        function toggleVibration(){settings.vibration=!settings.vibration;saveSettings();updateSettingsUI();if(settings.vibration&&navigator.vibrate) navigator.vibrate([100,50,100]);}
-        function toggleNotifications(){if(!settings.notifications&&Notification){Notification.requestPermission().then(p=>{if(p==='granted'){settings.notifications=true;saveSettings();updateSettingsUI();}});}else{settings.notifications=!settings.notifications;saveSettings();updateSettingsUI();}}
-        function checkNotificationPermission(){if(Notification&&Notification.permission==='granted'){settings.notifications=true;updateSettingsUI();}}
-        function loadStats(){let today=new Date().toDateString(),last=localStorage.getItem('lastDate');if(last!==today){let yd=new Date();yd.setDate(yd.getDate()-1);currentStreak=(last===yd.toDateString()?currentStreak:0);walkCount=0;localStorage.setItem('lastDate',today);localStorage.setItem('walkCount','0');localStorage.setItem('currentStreak',currentStreak);}else{walkCount=parseInt(localStorage.getItem('walkCount')||'0');currentStreak=parseInt(localStorage.getItem('currentStreak')||'0');}bestStreak=parseInt(localStorage.getItem('bestStreak')||'0');document.getElementById('walkCount').textContent=walkCount;document.getElementById('bestStreak').textContent=bestStreak;}
-        function saveStats(){localStorage.setItem('walkCount',walkCount);localStorage.setItem('currentStreak',currentStreak);localStorage.setItem('bestStreak',bestStreak);}
-        function updateHealthTip(){document.getElementById('healthTip').textContent=healthTips[Math.floor(Math.random()*healthTips.length)];}
-        function showMotivationalMessage(){const el=document.getElementById('motivationalMessage');el.textContent=motivationalMessages[Math.floor(Math.random()*motivationalMessages.length)];el.style.display='block';setTimeout(()=>el.style.display='none',3000);}
-        function updateUI(){const s=document.getElementById('status');const st=document.getElementById('startBtn'),sp=document.getElementById('stopBtn');if(isActive){s.textContent='Work mode active - Walking reminders enabled';s.className='status active';st.disabled=true;sp.disabled=false;document.getElementById('nextReminder').style.display='block';}else{s.textContent='Ready to start your work day';s.className='status inactive';st.disabled=false;sp.disabled=true;document.getElementById('nextReminder').style.display='none';}}
-        function startReminders(){if(isActive)return;isActive=true;updateUI();nextReminderTime=new Date(Date.now()+30*60000);startCountdown();reminderInterval=setTimeout(showReminder,30*60000);showMotivationalMessage();if(settings.sound)playNotificationSound();}
-        function stopReminders(){isActive=false;updateUI();clearTimeout(reminderInterval);clearInterval(countdownInterval);if(settings.sound)playNotificationSound();updateHealthTip();}
-        function startCountdown(){clearInterval(countdownInterval);countdownInterval=setInterval(()=>{if(!isActive)return clearInterval(countdownInterval);let left=nextReminderTime-Date.now();if(left<=0){document.getElementById('countdown').textContent='00:00';clearInterval(countdownInterval);}else{let m=Math.floor(left/60000),s=Math.floor((left%60000)/1000);document.getElementById('countdown').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}},1000);}
-        function updateProgressRing(p=0){const c=document.getElementById('progressCircle'),circ=2*Math.PI*36,off=circ-(p/100)*circ;c.style.strokeDashoffset=off;}
-        function showReminder(){document.getElementById('reminderPopup').style.display='flex';if(settings.sound)playNotificationSound();if(settings.vibration&&navigator.vibrate)navigator.vibrate([200,100,200]);if(settings.notifications)new Notification('Time to Walk!','Take a 2-3 minute walking break.');}
-        function acknowledgeReminder(){document.getElementById('reminderPopup').style.display='none';walkCount++;currentStreak++;if(currentStreak>bestStreak)bestStreak=currentStreak;document.getElementById('walkCount').textContent=walkCount;document.getElementById('bestStreak').textContent=bestStreak;saveStats();showMotivationalMessage();updateHealthTip();if(isActive){nextReminderTime=new Date(Date.now()+30*60000);startCountdown();reminderInterval=setTimeout(showReminder,30*60000);}}
-        function playNotificationSound(){if('speechSynthesis'in window){let u=new SpeechSynthesisUtterance('Ding!');u.volume=0.3;u.rate=2;u.pitch=2;speechSynthesis.speak(u);}}
-        document.addEventListener('DOMContentLoaded',initApp);
+
+        function saveSettings() {
+            localStorage.setItem('walkingSettings', JSON.stringify(settings));
+        }
+
+        function updateSettingsUI() {
+            document.getElementById('soundToggle').classList.toggle('active', settings.sound);
+            document.getElementById('vibrationToggle').classList.toggle('active', settings.vibration);
+            document.getElementById('notificationToggle').classList.toggle('active', settings.notifications);
+        }
+
+        function toggleSound() {
+            settings.sound = !settings.sound;
+            saveSettings();
+            updateSettingsUI();
+        }
+
+        function toggleVibration() {
+            settings.vibration = !settings.vibration;
+            saveSettings();
+            updateSettingsUI();
+            if (settings.vibration && navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+        }
+
+        function toggleNotifications() {
+            if (!settings.notifications) {
+                requestNotificationPermission();
+            } else {
+                settings.notifications = false;
+                saveSettings();
+                updateSettingsUI();
+            }
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        settings.notifications = true;
+                        saveSettings();
+                        updateSettingsUI();
+                        console.log('Notifications enabled');
+                    } else {
+                        console.log('Notifications denied');
+                    }
+                });
+            }
+        }
+
+        function loadStats() {
+            const today = new Date().toDateString();
+            const lastDate = localStorage.getItem('lastDate');
+            
+            if (lastDate !== today) {
+                // New day - reset daily stats but check streak
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastDate === yesterday.toDateString()) {
+                    // Consecutive day - keep streak
+                    currentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
+                } else {
+                    // Streak broken
+                    currentStreak = 0;
+                }
+                
+                walkCount = 0;
+                localStorage.setItem('lastDate', today);
+                localStorage.setItem('walkCount', '0');
+                localStorage.setItem('currentStreak', currentStreak.toString());
+            } else {
+                walkCount = parseInt(localStorage.getItem('walkCount') || '0');
+                currentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
+            }
+            
+            bestStreak = parseInt(localStorage.getItem('bestStreak') || '0');
+            
+            document.getElementById('walkCount').textContent = walkCount;
+            document.getElementById('bestStreak').textContent = bestStreak;
+        }
+
+        function saveStats() {
+            localStorage.setItem('walkCount', walkCount.toString());
+            localStorage.setItem('currentStreak', currentStreak.toString());
+            localStorage.setItem('bestStreak', bestStreak.toString());
+        }
+
+        function updateHealthTip() {
+            const tip = healthTips[Math.floor(Math.random() * healthTips.length)];
+            document.getElementById('healthTip').textContent = tip;
+        }
+
+        function showMotivationalMessage() {
+            const message = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+            const element = document.getElementById('motivationalMessage');
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateUI() {
+            const statusElement = document.getElementById('status');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            
+            if (isActive) {
+                statusElement.textContent = 'Work mode active - Walking reminders enabled';
+                statusElement.className = 'status active';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                document.getElementById('nextReminder').style.display = 'block';
+            } else {
+                statusElement.textContent = 'Ready to start your work day';
+                statusElement.className = 'status inactive';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                document.getElementById('nextReminder').style.display = 'none';
+            }
+        }
+
+        function startReminders() {
+            if (isActive) return;
+            
+            isActive = true;
+            updateUI();
+            
+            // Set next reminder time (30 minutes from now)
+            nextReminderTime = new Date(Date.now() + 30 * 60 * 1000);
+            
+            // Start countdown
+            startCountdown();
+            
+            // Set reminder interval
+            reminderInterval = setTimeout(showReminder, 30 * 60 * 1000);
+            
+            showMotivationalMessage();
+            
+            if (settings.sound) {
+                playNotificationSound();
+            }
+        }
+
+        function stopReminders() {
+            isActive = false;
+            updateUI();
+            
+            // Clear intervals
+            if (reminderInterval) {
+                clearTimeout(reminderInterval);
+                reminderInterval = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            
+            if (settings.sound) {
+                playNotificationSound();
+            }
+            
+            updateHealthTip();
+        }
+
+        function startCountdown() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            countdownInterval = setInterval(() => {
+                if (!isActive) {
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                const timeLeft = nextReminderTime - Date.now();
+                
+                if (timeLeft <= 0) {
+                    document.getElementById('countdown').textContent = '00:00';
+                    clearInterval(countdownInterval);
+                } else {
+                    const minutes = Math.floor(timeLeft / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    document.getElementById('countdown').textContent = 
+                        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function showReminder() {
+            console.log('Showing reminder...');
+            
+            // Show popup
+            document.getElementById('reminderPopup').style.display = 'flex';
+            
+            // Play sound
+            if (settings.sound) {
+                playNotificationSound();
+            }
+            
+            // Vibrate
+            if (settings.vibration && navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+            
+            // Show browser notification
+            if (settings.notifications && 'Notification' in window && Notification.permission === 'granted') {
+                try {
+                    new Notification('Time to Walk! 🚶‍♂️', {
+                        body: 'Take a 2-3 minute walking break to improve your health and productivity.',
+                        icon: 'icon.png',
+                        badge: 'icon.png',
+                        requireInteraction: true,
+                        tag: 'walking-reminder'
+                    });
+                } catch (error) {
+                    console.log('Notification error:', error);
+                }
+            }
+        }
+
+        function acknowledgeReminder() {
+            // Hide popup
+            document.getElementById('reminderPopup').style.display = 'none';
+            
+            // Update stats
+            walkCount++;
+            currentStreak++;
+            
+            if (currentStreak > bestStreak) {
+                bestStreak = currentStreak;
+            }
+            
+            // Update UI
+            document.getElementById('walkCount').textContent = walkCount;
+            document.getElementById('bestStreak').textContent = bestStreak;
+            
+            // Save stats
+            saveStats();
+            
+            // Show motivational message
+            showMotivationalMessage();
+            
+            // Update health tip
+            updateHealthTip();
+            
+            // Schedule next reminder if still active
+            if (isActive) {
+                nextReminderTime = new Date(Date.now() + 30 * 60 * 1000);
+                startCountdown();
+                reminderInterval = setTimeout(showReminder, 30 * 60 * 1000);
+            }
+        }
+
+        function playNotificationSound() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance('Walking time!');
+                utterance.volume = 0.3;
+                utterance.rate = 1.5;
+                utterance.pitch = 1.2;
+                speechSynthesis.speak(utterance);
+            }
+            
+            // Alternative: Use Audio API with a simple beep
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (error) {
+                console.log('Audio API not supported');
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

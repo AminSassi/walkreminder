@@ -130,6 +130,12 @@
         .toggle.active{background:var(--success);}        
         .toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.3s;}
         .toggle.active::after{transform:translateX(26px);}
+        
+        .interval-setting {display: flex; align-items: center; gap: 10px;}
+        .interval-setting input {
+            width: 70px; padding: 8px; border-radius: 8px; border: 1px solid #ddd;
+            text-align: center; font-weight: bold;
+        }
 
         .reminder-popup {
             display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);
@@ -177,6 +183,12 @@
             <div class="setting-item"><span>Sound Notifications</span><div id="soundToggle" class="toggle active"></div></div>
             <div class="setting-item"><span>Vibration</span><div id="vibrationToggle" class="toggle active"></div></div>
             <div class="setting-item"><span>Browser Notifications</span><div id="notificationToggle" class="toggle"></div></div>
+            <div class="setting-item">
+                <span>Reminder Interval (minutes)</span>
+                <div class="interval-setting">
+                    <input type="number" id="intervalInput" min="1" max="120" value="30">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -197,7 +209,12 @@
         let walkCount = 0;
         let bestStreak = 0;
         let currentStreak = 0;
-        let settings = { sound: true, vibration: true, notifications: false };
+        let settings = { 
+            sound: true, 
+            vibration: true, 
+            notifications: false,
+            interval: 30 // Default interval in minutes
+        };
         
         // Health tips and motivational messages
         const healthTips = [
@@ -232,48 +249,59 @@
             document.getElementById('soundToggle').addEventListener('click', toggleSound);
             document.getElementById('vibrationToggle').addEventListener('click', toggleVibration);
             document.getElementById('notificationToggle').addEventListener('click', toggleNotifications);
+            document.getElementById('intervalInput').addEventListener('change', updateInterval);
             
-            // Set up background activity
-            setInterval(keepAlive, 60000); // Keep alive every minute
+            // Set up background timer restoration
+            restoreBackgroundTimer();
             
             // Handle visibility change
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && isActive) {
-                    console.log('App hidden, maintaining timers');
+                    console.log('App hidden, saving timer state');
+                    saveTimerState();
                 } else if (!document.hidden && isActive) {
-                    console.log('App visible, syncing timers');
-                    syncTimers();
+                    console.log('App visible, restoring timer state');
+                    restoreTimerState();
                 }
             });
-        }
-        
-        function syncTimers() {
-            if (isActive && nextReminderTime) {
-                const now = Date.now();
-                const timeLeft = nextReminderTime - now;
-                
-                if (timeLeft <= 0) {
-                    showReminder();
-                } else {
-                    startCountdown();
-                }
-            }
         }
         
         function loadSettings() {
             const saved = localStorage.getItem('walkingSettings');
             if (saved) {
                 try {
-                    settings = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    settings = { ...settings, ...parsed };
                 } catch (e) {
                     console.log('Error loading settings:', e);
                 }
             }
+            document.getElementById('intervalInput').value = settings.interval;
             updateSettingsUI();
         }
         
         function saveSettings() {
             localStorage.setItem('walkingSettings', JSON.stringify(settings));
+        }
+        
+        function updateInterval() {
+            const newInterval = parseInt(document.getElementById('intervalInput').value);
+            if (newInterval >= 1 && newInterval <= 120) {
+                settings.interval = newInterval;
+                saveSettings();
+                
+                // Restart the timer if active
+                if (isActive) {
+                    clearTimeout(reminderInterval);
+                    clearInterval(countdownInterval);
+                    nextReminderTime = Date.now() + settings.interval * 60000;
+                    startCountdown();
+                    reminderInterval = setTimeout(showReminder, settings.interval * 60000);
+                }
+            } else {
+                alert('Please enter a value between 1 and 120 minutes');
+                document.getElementById('intervalInput').value = settings.interval;
+            }
         }
         
         function updateSettingsUI() {
@@ -286,6 +314,10 @@
             settings.sound = !settings.sound;
             saveSettings();
             updateSettingsUI();
+            // Play a test sound when toggling on
+            if (settings.sound) {
+                playNotificationSound();
+            }
         }
         
         function toggleVibration() {
@@ -395,13 +427,16 @@
                 });
             }
             
-            // Set the next reminder time (30 minutes from now)
-            nextReminderTime = new Date(Date.now() + 30 * 60 * 1000);
+            // Set the next reminder time
+            nextReminderTime = Date.now() + settings.interval * 60000;
             startCountdown();
-            reminderInterval = setTimeout(showReminder, 30 * 60 * 1000);
+            reminderInterval = setTimeout(showReminder, settings.interval * 60000);
             showMotivationalMessage();
             
             if (settings.sound) playNotificationSound();
+            
+            // Save timer state
+            saveTimerState();
         }
         
         function stopReminders() {
@@ -409,6 +444,9 @@
             updateUI();
             clearTimeout(reminderInterval);
             clearInterval(countdownInterval);
+            
+            // Clear timer state
+            localStorage.removeItem('timerState');
             
             if (settings.sound) playNotificationSound();
             updateHealthTip();
@@ -431,7 +469,7 @@
                         `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
                     
                     // Update progress ring
-                    const totalTime = 30 * 60 * 1000;
+                    const totalTime = settings.interval * 60000;
                     const elapsed = totalTime - timeLeft;
                     const progress = (elapsed / totalTime) * 100;
                     updateProgressRing(progress);
@@ -479,35 +517,104 @@
             updateHealthTip();
             
             if (isActive) {
-                nextReminderTime = new Date(Date.now() + 30 * 60 * 1000);
+                nextReminderTime = Date.now() + settings.interval * 60000;
                 startCountdown();
-                reminderInterval = setTimeout(showReminder, 30 * 60 * 1000);
+                reminderInterval = setTimeout(showReminder, settings.interval * 60000);
+                
+                // Save timer state
+                saveTimerState();
             }
         }
         
         function playNotificationSound() {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance('Time to walk!');
-                utterance.volume = 0.3;
-                utterance.rate = 1.2;
-                utterance.pitch = 1.5;
-                speechSynthesis.speak(utterance);
-            }
-            
-            // Play a simple beep sound
+            // Create a simple notification sound
             try {
-                const audio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
-                audio.volume = 0.3;
-                audio.play();
+                const audio = new Audio();
+                const context = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = context.createOscillator();
+                const gainNode = context.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(context.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 800;
+                gainNode.gain.value = 0.3;
+                
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.stop();
+                }, 300);
             } catch (e) {
-                console.log('Audio playback error:', e);
+                console.log('Audio context error:', e);
+                // Fallback to beep if AudioContext fails
+                try {
+                    const audio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
+                    audio.volume = 0.3;
+                    audio.play();
+                } catch (e) {
+                    console.log('Audio playback error:', e);
+                }
             }
         }
         
-        function keepAlive() {
-            // Simple keep-alive function
+        // Background timer persistence
+        function saveTimerState() {
             if (isActive) {
-                console.log('App keeping alive...');
+                const timerState = {
+                    nextReminderTime: nextReminderTime,
+                    interval: settings.interval,
+                    savedAt: Date.now()
+                };
+                localStorage.setItem('timerState', JSON.stringify(timerState));
+            }
+        }
+        
+        function restoreTimerState() {
+            const timerState = localStorage.getItem('timerState');
+            if (timerState) {
+                try {
+                    const state = JSON.parse(timerState);
+                    const elapsed = Date.now() - state.savedAt;
+                    const remaining = state.nextReminderTime - state.savedAt - elapsed;
+                    
+                    if (remaining > 0) {
+                        // Timer is still valid
+                        nextReminderTime = state.nextReminderTime;
+                        startCountdown();
+                        reminderInterval = setTimeout(showReminder, remaining);
+                    } else {
+                        // Timer expired while app was in background
+                        showReminder();
+                    }
+                } catch (e) {
+                    console.log('Error restoring timer state:', e);
+                }
+            }
+        }
+        
+        function restoreBackgroundTimer() {
+            const timerState = localStorage.getItem('timerState');
+            if (timerState) {
+                try {
+                    const state = JSON.parse(timerState);
+                    const elapsed = Date.now() - state.savedAt;
+                    const remaining = state.nextReminderTime - state.savedAt - elapsed;
+                    
+                    if (remaining > 0) {
+                        // Resume the timer
+                        isActive = true;
+                        nextReminderTime = state.nextReminderTime;
+                        updateUI();
+                        startCountdown();
+                        reminderInterval = setTimeout(showReminder, remaining);
+                    } else {
+                        // Clear expired timer
+                        localStorage.removeItem('timerState');
+                    }
+                } catch (e) {
+                    console.log('Error restoring background timer:', e);
+                }
             }
         }
         
